@@ -23,7 +23,7 @@ def Adc_pred(input_data):
 def main() :
     st.title("AdClicker Prediction")
 
-    age = st.text_input("Enter Age : ")
+    age = st.number_input("Enter Age : ")
     gender = st.selectbox("Gender : ",["Male","Female","Non-Binary","Unknown"])
     device_type = st.selectbox("Enter Device : ",["Desktop","Mobile","Mobile","Tablet","Unknown"])
     browsing_history = st.selectbox("Browsing history : ",["Shopping","Education","Entertainment","Social media","News","Unknown"])
@@ -34,7 +34,9 @@ def main() :
         click = Adc_pred([age,gender,device_type,browsing_history,time_of_day])
 
     st.success(click)
-
+    
+if __name__ == '__main__':
+    main()
 
 # %%
 
