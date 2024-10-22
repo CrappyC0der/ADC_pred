@@ -1,100 +1,41 @@
+
 import streamlit as st
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
+import pickle
+from sklearn.preprocessing import StandardScaler
 
-# Set page title
-st.set_page_config(page_title="Ad Click Dataset Analysis")
+# Load the pre-trained model
+model_file = 'Trained_model.sav'
+with open(model_file, 'rb') as f:
+    model = pickle.load(f)
 
-# Load the data
-@st.cache_data
-def load_data():
-    df = pd.read_csv("ad_click_dataset.csv")
-    return df
+# Title of the app
+st.title("Ad Click Prediction")
 
-df = load_data()
+# Upload dataset
+uploaded_file = st.file_uploader("Upload your dataset (CSV)", type=["csv"])
 
-# Title
-st.title("Ad Click Dataset Analysis")
+if uploaded_file is not None:
+    # Read the CSV file
+    data = pd.read_csv(uploaded_file)
+    st.write("Data Preview:", data.head())
 
-# Show raw data
-if st.checkbox("Show raw data"):
-    st.subheader("Raw data")
-    st.write(df)
+    # Assuming the dataset requires standardization or specific preprocessing
+    st.write("Processing the data...")
+    # Apply any necessary data preprocessing here (scaling as an example)
+    scaler = StandardScaler()
+    features = data.iloc[:, :-1]  # Exclude label/target column if present
+    scaled_features = scaler.fit_transform(features)
+    
+    # Prediction
+    if st.button("Predict Ad Clicks"):
+        predictions = model.predict(scaled_features)
+        st.write("Predictions:", predictions)
 
-# Data info
-st.subheader("Dataset Information")
-st.write(df.info())
+    st.write("Prediction Completed.")
 
-# Null percentages
-st.subheader("Null Percentages")
-
-def get_null_percentages(df):
-    result = {}
-    for col in df.columns:
-        null_count = df[col].isnull().sum()
-        total_count = len(df)
-        null_percentage = (null_count / total_count) * 100
-        result[col] = round(null_percentage, 2)
-    return result
-
-null_percentages = get_null_percentages(df)
-st.write(null_percentages)
-
-# Age distribution
-st.subheader("Age Distribution")
-fig, ax = plt.subplots(figsize=(10, 6))
-sns.histplot(df['age'], bins=10, kde=True, ax=ax)
-ax.set_title('Age Distribution')
-st.pyplot(fig)
-
-# Gender distribution
-st.subheader("Gender Distribution")
-gender_counts = df['gender'].value_counts()
-fig, ax = plt.subplots(figsize=(10, 6))
-gender_counts.plot(kind='bar', ax=ax)
-ax.set_title('Gender Distribution')
-st.pyplot(fig)
-
-# Device type distribution
-st.subheader("Device Type Distribution")
-device_counts = df['device_type'].value_counts()
-fig, ax = plt.subplots(figsize=(10, 6))
-device_counts.plot(kind='bar', ax=ax)
-ax.set_title('Device Type Distribution')
-st.pyplot(fig)
-
-# Click rate by gender
-st.subheader("Click Rate by Gender")
-click_rate_gender = df.groupby('gender')['click'].mean()
-fig, ax = plt.subplots(figsize=(10, 6))
-click_rate_gender.plot(kind='bar', ax=ax)
-ax.set_title('Click Rate by Gender')
-ax.set_ylabel('Click Rate')
-st.pyplot(fig)
-
-# Click rate by device type
-st.subheader("Click Rate by Device Type")
-click_rate_device = df.groupby('device_type')['click'].mean()
-fig, ax = plt.subplots(figsize=(10, 6))
-click_rate_device.plot(kind='bar', ax=ax)
-ax.set_title('Click Rate by Device Type')
-ax.set_ylabel('Click Rate')
-st.pyplot(fig)
-
-# Correlation heatmap
-st.subheader("Correlation Heatmap")
-numeric_df = df.select_dtypes(include=[np.number])
-corr = numeric_df.corr()
-fig, ax = plt.subplots(figsize=(12, 10))
-sns.heatmap(corr, annot=True, cmap='coolwarm', ax=ax)
-ax.set_title('Correlation Heatmap')
-st.pyplot(fig)
-
-# Add more visualizations and analysis as needed
-
-st.write("This is a basic Streamlit app for the Ad Click Dataset analysis. You can expand on this by adding more visualizations, insights, and interactive elements.")
+else:
+    st.write("Please upload a CSV file to start prediction.")
 
 
 
