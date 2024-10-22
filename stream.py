@@ -67,11 +67,6 @@ else:
 """
 
 # Save the Streamlit app script to a .py file
-streamlit_file_path = '/mnt/data/ad_click_prediction_app.py'
-with open(streamlit_file_path, 'w') as file:
-    file.write(streamlit_code)
-
-streamlit_file_path  # Return the file path for download
 
 
 
