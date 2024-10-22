@@ -1,14 +1,15 @@
-# Let's create a sample Streamlit app script for this use case
-
-
 import streamlit as st
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
+import pickle
 from sklearn.preprocessing import LabelEncoder
 
-# Load data
+# Load saved model
+model_file = 'Trained_model.sav'
+with open(model_file, 'rb') as file:
+    model = pickle.load(file)
+
+# Load data for label encoding (assuming 'new_data.csv' is present for reference)
 data = pd.read_csv('new_data.csv')
 
 # Drop unnecessary columns
@@ -17,23 +18,12 @@ data = data.drop(columns=['id', 'full_name'])
 # Fill missing values
 data.fillna('Unknown', inplace=True)
 
-# Encode categorical variables
+# Encode categorical variables using the same method as in training
 label_encoders = {}
 for column in ['gender', 'device_type', 'ad_position', 'browsing_history', 'time_of_day']:
     le = LabelEncoder()
     data[column] = le.fit_transform(data[column])
     label_encoders[column] = le
-
-# Split data into features and target
-X = data.drop(columns=['click'])
-y = data['click']
-
-# Split into training and testing data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Train model
-model = RandomForestClassifier()
-model.fit(X_train, y_train)
 
 # Streamlit App Interface
 st.title('Ad Click Prediction')
@@ -64,11 +54,3 @@ if prediction[0] == 1:
     st.success("The user is predicted to click on the ad!")
 else:
     st.error("The user is predicted to not click on the ad.")
-
-
-# Save the Streamlit app script to a .py file
-
-
-
-
-
