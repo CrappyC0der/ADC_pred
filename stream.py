@@ -1,6 +1,6 @@
 # Let's create a sample Streamlit app script for this use case
 
-streamlit_code = """
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -64,7 +64,7 @@ if prediction[0] == 1:
     st.success("The user is predicted to click on the ad!")
 else:
     st.error("The user is predicted to not click on the ad.")
-"""
+
 
 # Save the Streamlit app script to a .py file
 
